@@ -1,5 +1,8 @@
-import type { DatabaseListItem, PostgresConfig } from "../types/database.types";
-import { exec } from "../utility/process";
+import type {
+  DatabaseListItem,
+  PostgresConfig,
+} from "../../types/database.types";
+import { exec } from "../../utility/process";
 import BaseDbms from "./base";
 
 class PostgresDbms extends BaseDbms {

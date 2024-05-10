@@ -1,5 +1,5 @@
-import DatabaseUtil from "@/lib/database";
-import { DOCKER_HOST, STORAGE_DIR } from "@/utility/consts";
+import DatabaseUtil from "@/lib/database-util";
+import { DOCKER_HOST, BACKUP_DIR } from "@/consts";
 import { mkdir } from "@/utility/utils";
 import path from "path";
 
@@ -19,7 +19,7 @@ const main = async () => {
     const dbName = "test";
 
     // Create backup
-    const outDir = path.join(STORAGE_DIR, db.config.host, dbName);
+    const outDir = path.join(BACKUP_DIR, db.config.host, dbName);
     mkdir(outDir);
     const outFile = path.join(outDir, `/${Date.now()}.tar`);
     console.log(await db.dump(dbName, outFile));

@@ -1,4 +1,4 @@
-import type { DatabaseListItem } from "../types/database.types";
+import type { DatabaseListItem } from "../../types/database.types";
 
 class BaseDbms {
   async getDatabases(): Promise<DatabaseListItem[]> {

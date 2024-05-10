@@ -1,5 +1,5 @@
-import BaseDbms from "../dbms/base";
-import PostgresDbms from "../dbms/postgres";
+import BaseDbms from "./dbms/base";
+import PostgresDbms from "./dbms/postgres";
 import type { DatabaseConfig, DatabaseListItem } from "../types/database.types";
 
 class DatabaseUtil {
