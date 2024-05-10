@@ -1,6 +1,5 @@
-import type { DatabaseConfig } from "@/types/database.types";
-import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { relations, sql, type InferSelectModel } from "drizzle-orm";
+import { blob, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 
 export const userModel = sqliteTable("users", {
@@ -14,6 +13,7 @@ export const userModel = sqliteTable("users", {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });
+export type UserModel = InferSelectModel<typeof userModel>;
 
 export const serverModel = sqliteTable("servers", {
   id: text("id")
@@ -28,6 +28,11 @@ export const serverModel = sqliteTable("servers", {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });
+export type ServerModel = InferSelectModel<typeof serverModel>;
+
+export const serverRelations = relations(serverModel, ({ many }) => ({
+  databases: many(databaseModel),
+}));
 
 export const databaseModel = sqliteTable("databases", {
   id: text("id")
@@ -46,3 +51,58 @@ export const databaseModel = sqliteTable("databases", {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });
+export type DatabaseModel = InferSelectModel<typeof databaseModel>;
+
+export const databaseRelations = relations(databaseModel, ({ one }) => ({
+  server: one(serverModel, {
+    fields: [databaseModel.serverId],
+    references: [serverModel.id],
+  }),
+}));
+
+export const backupTypeEnum = ["backup", "restore"] as const;
+
+export const backupStatusEnum = [
+  "pending",
+  "running",
+  "success",
+  "failed",
+] as const;
+
+export const backupModel = sqliteTable("backups", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
+  serverId: text("server_id")
+    .references(() => serverModel.id, {
+      onUpdate: "cascade",
+      onDelete: "cascade",
+    })
+    .notNull(),
+  databaseId: text("database_id")
+    .references(() => databaseModel.id, {
+      onUpdate: "cascade",
+      onDelete: "cascade",
+    })
+    .notNull(),
+  type: text("type", { enum: backupTypeEnum }).default("backup"),
+  status: text("status", { enum: backupStatusEnum }).default("pending"),
+  output: text("output"),
+  key: text("key"),
+  hash: text("hash"),
+  size: integer("size"),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const backupRelations = relations(backupModel, ({ one }) => ({
+  server: one(serverModel, {
+    fields: [backupModel.serverId],
+    references: [serverModel.id],
+  }),
+  database: one(databaseModel, {
+    fields: [backupModel.databaseId],
+    references: [databaseModel.id],
+  }),
+}));

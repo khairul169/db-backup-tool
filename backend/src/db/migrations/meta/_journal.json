@@ -1,0 +1,13 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1715367813285,
+      "tag": "0000_square_agent_brand",
+      "breakpoints": true
+    }
+  ]
+}

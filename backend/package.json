@@ -9,10 +9,11 @@
     "start": "bun dist/main.js",
     "generate": "drizzle-kit generate",
     "migrate": "bun src/db/migrate.ts",
-    "reset": "rm -f storage/database.db && bun run migrate"
+    "reset": "rm -rf storage && bun run migrate"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/node-schedule": "^2.1.7",
     "drizzle-kit": "^0.21.0"
   },
   "peerDependencies": {
@@ -23,6 +24,7 @@
     "drizzle-orm": "^0.30.10",
     "hono": "^4.3.4",
     "nanoid": "^5.0.7",
+    "node-schedule": "^2.1.1",
     "zod": "^3.23.8"
   }
 }

@@ -1,38 +1,56 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { createServerSchema } from "@/schemas/server.schema";
-import db from "@/db";
-import { asc, eq } from "drizzle-orm";
+import { checkServerSchema, createServerSchema } from "@/schemas/server.schema";
 import { HTTPException } from "hono/http-exception";
-import { serverModel } from "@/db/models";
+import DatabaseUtil from "@/lib/database-util";
+import ServerService from "@/services/server.service";
 
+const serverService = new ServerService();
 const router = new Hono()
 
   .get("/", async (c) => {
-    const servers = await db.query.servers.findMany({
-      columns: { connection: false, ssh: false },
-      orderBy: asc(serverModel.createdAt),
-    });
-    return c.json(servers);
+    return c.json(await serverService.getAll());
   })
 
   .post("/", zValidator("json", createServerSchema), async (c) => {
     const data = c.req.valid("json");
-    const isExist = await db.query.servers.findFirst({
-      where: eq(serverModel.name, data.name),
-    });
-    if (isExist) {
-      throw new HTTPException(400, { message: "Server name already exists" });
-    }
-
-    const dataValue = {
-      ...data,
-      connection: data.connection ? JSON.stringify(data.connection) : null,
-      ssh: data.ssh ? JSON.stringify(data.ssh) : null,
-    };
-    const [result] = await db.insert(serverModel).values(dataValue).returning();
-
+    const result = await serverService.create(data);
     return c.json(result);
+  })
+
+  .post("/check", zValidator("json", checkServerSchema), async (c) => {
+    const data = c.req.valid("json");
+    const db = new DatabaseUtil(data.connection);
+
+    try {
+      const databases = await db.getDatabases();
+      return c.json({ success: true, databases });
+    } catch (err) {
+      throw new HTTPException(400, {
+        message: "Cannot connect to the database.",
+      });
+    }
+  })
+
+  .get("/check/:id", async (c) => {
+    const { id } = c.req.param();
+    const server = await serverService.getOrFail(id);
+    const db = new DatabaseUtil(server.connection);
+
+    try {
+      const databases = await db.getDatabases();
+      return c.json({ success: true, databases });
+    } catch (err) {
+      throw new HTTPException(400, {
+        message: "Cannot connect to the database.",
+      });
+    }
+  })
+
+  .get("/:id", async (c) => {
+    const { id } = c.req.param();
+    const server = await serverService.getOrFail(id);
+    return c.json(server);
   });
 
 export default router;
