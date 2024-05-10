@@ -1,0 +1,17 @@
+{
+  "name": "db-backup-tool",
+  "version": "0.1.0",
+  "author": {
+    "name": "Khairul Hidayat",
+    "email": "khai@rul.sh",
+    "url": "https://github.com/khairul169"
+  },
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "dev": "concurrently \"cd backend && pnpm dev\" \"cd frontend && pnpm dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

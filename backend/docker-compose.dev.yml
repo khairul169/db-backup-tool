@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  backend:
+    container_name: db-backup-be
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./:/app:rw
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
