@@ -1,5 +1,5 @@
-import db from "@/db";
-import { databaseModel } from "@/db/models";
+import db from "../db";
+import { databaseModel } from "../db/models";
 import { desc, eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 

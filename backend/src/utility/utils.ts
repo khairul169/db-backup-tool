@@ -5,3 +5,7 @@ export const mkdir = (dir: string) => {
     fs.mkdirSync(dir, { recursive: true });
   }
 };
+
+export const urlencode = (str: string) => {
+  return encodeURIComponent(str);
+};

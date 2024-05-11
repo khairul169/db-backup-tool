@@ -3,6 +3,7 @@ import type {
   PostgresConfig,
 } from "../../types/database.types";
 import { exec } from "../../utility/process";
+import { urlencode } from "../../utility/utils";
 import BaseDbms from "./base";
 
 class PostgresDbms extends BaseDbms {
@@ -18,7 +19,7 @@ class PostgresDbms extends BaseDbms {
   }
 
   async dump(dbName: string, path: string) {
-    return exec(["pg_dump", this.dbUrl + `/${dbName}`, "-Ftar", "-f", path]);
+    return exec(["pg_dump", this.dbUrl + `/${dbName}`, "-Z9", "-f", path]);
   }
 
   async restore(path: string) {
@@ -29,7 +30,7 @@ class PostgresDbms extends BaseDbms {
       "-cC",
       "--if-exists",
       "--exit-on-error",
-      "-Ftar",
+      // "-Ftar",
       path,
     ]);
   }
@@ -45,7 +46,7 @@ class PostgresDbms extends BaseDbms {
   private get dbUrl() {
     const { user, pass, host } = this.config;
     const port = this.config.port || 5432;
-    return `postgresql://${user}:${pass}@${host}:${port}`;
+    return `postgresql://${user}:${urlencode(pass)}@${host}:${port}`;
   }
 }
 

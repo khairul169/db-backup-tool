@@ -1,6 +1,6 @@
-import db from "@/db";
-import { databaseModel, serverModel, type ServerModel } from "@/db/models";
-import type { CreateServerSchema } from "@/schemas/server.schema";
+import db from "../db";
+import { databaseModel, serverModel, type ServerModel } from "../db/models";
+import type { CreateServerSchema } from "../schemas/server.schema";
 import { asc, desc, eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 
@@ -36,7 +36,15 @@ export default class ServerService {
         databases: true,
       },
     });
-    return server;
+
+    if (!server) {
+      return null;
+    }
+
+    const result = this.parse(server);
+    delete result.connection.pass;
+
+    return result;
   }
 
   async create(data: CreateServerSchema) {
@@ -73,7 +81,7 @@ export default class ServerService {
     });
   }
 
-  parse(data: ServerModel) {
+  parse<T extends Pick<ServerModel, "connection" | "ssh">>(data: T) {
     const result = {
       ...data,
       connection: data.connection ? JSON.parse(data.connection) : null,

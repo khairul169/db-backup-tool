@@ -1,13 +1,13 @@
-import db from "@/db";
 import fs from "fs";
 import path from "path";
-import { backupModel, databaseModel } from "@/db/models";
-import DatabaseUtil from "@/lib/database-util";
-import ServerService from "@/services/server.service";
 import { and, asc, eq, sql } from "drizzle-orm";
-import { BACKUP_DIR } from "@/consts";
-import { mkdir } from "@/utility/utils";
-import { hashFile } from "@/utility/hash";
+import ServerService from "../services/server.service";
+import db from "../db";
+import { backupModel, databaseModel } from "../db/models";
+import DatabaseUtil from "../lib/database-util";
+import { BACKUP_DIR } from "../consts";
+import { mkdir } from "../utility/utils";
+import { hashFile } from "../utility/hash";
 
 let isRunning = false;
 const serverService = new ServerService();
@@ -19,16 +19,12 @@ const runBackup = async (task: PendingTasks[number]) => {
       .set({ status: "running" })
       .where(eq(backupModel.id, task.id));
 
-    const server = serverService.parse(task.server as never);
+    const server = serverService.parse(task.server);
     const dbName = task.database.name;
     const dbUtil = new DatabaseUtil(server.connection);
 
     if (task.type === "backup") {
-      const key = path.join(
-        server.connection.host,
-        dbName,
-        `${Date.now()}.tar`
-      );
+      const key = path.join(server.connection.host, dbName, `${Date.now()}`);
       const outFile = path.join(BACKUP_DIR, key);
       mkdir(path.dirname(outFile));
 

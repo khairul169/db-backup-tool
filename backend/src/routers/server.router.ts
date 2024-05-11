@@ -1,9 +1,12 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { checkServerSchema, createServerSchema } from "@/schemas/server.schema";
 import { HTTPException } from "hono/http-exception";
-import DatabaseUtil from "@/lib/database-util";
-import ServerService from "@/services/server.service";
+import ServerService from "../services/server.service";
+import {
+  checkServerSchema,
+  createServerSchema,
+} from "../schemas/server.schema";
+import DatabaseUtil from "../lib/database-util";
 
 const serverService = new ServerService();
 const router = new Hono()
@@ -27,7 +30,7 @@ const router = new Hono()
       return c.json({ success: true, databases });
     } catch (err) {
       throw new HTTPException(400, {
-        message: "Cannot connect to the database.",
+        message: (err as any).message || "Cannot connect to the database.",
       });
     }
   })
@@ -49,7 +52,7 @@ const router = new Hono()
 
   .get("/:id", async (c) => {
     const { id } = c.req.param();
-    const server = await serverService.getOrFail(id);
+    const server = await serverService.getById(id);
     return c.json(server);
   });
 

@@ -14,7 +14,7 @@ const sshSchema = z
 const postgresSchema = z.object({
   type: z.literal("postgres"),
   host: z.string(),
-  port: z.number().optional(),
+  port: z.coerce.number().int().optional(),
   user: z.string(),
   pass: z.string(),
 });

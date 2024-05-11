@@ -2,8 +2,8 @@ import {
   createBackupSchema,
   getAllBackupQuery,
   restoreBackupSchema,
-} from "@/schemas/backup.schema";
-import BackupService from "@/services/backup.service";
+} from "../schemas/backup.schema";
+import BackupService from "../services/backup.service";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 

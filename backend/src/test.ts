@@ -1,6 +1,6 @@
-import DatabaseUtil from "@/lib/database-util";
-import { DOCKER_HOST, BACKUP_DIR } from "@/consts";
-import { mkdir } from "@/utility/utils";
+import DatabaseUtil from "../lib/database-util";
+import { DOCKER_HOST, BACKUP_DIR } from "../consts";
+import { mkdir } from "../utility/utils";
 import path from "path";
 
 const main = async () => {

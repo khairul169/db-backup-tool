@@ -1,11 +1,11 @@
-import db from "@/db";
-import { backupModel, serverModel } from "@/db/models";
+import db from "../db";
+import { backupModel, serverModel } from "../db/models";
 import type {
   CreateBackupSchema,
   GetAllBackupQuery,
   RestoreBackupSchema,
-} from "@/schemas/backup.schema";
-import { and, desc, eq, inArray } from "drizzle-orm";
+} from "../schemas/backup.schema";
+import { and, count, desc, eq, inArray } from "drizzle-orm";
 import DatabaseService from "./database.service";
 import { HTTPException } from "hono/http-exception";
 
@@ -20,18 +20,28 @@ export default class BackupService {
     const page = query.page || 1;
     const limit = query.limit || 10;
 
+    const where = and(
+      serverId ? eq(backupModel.serverId, serverId) : undefined,
+      databaseId ? eq(backupModel.databaseId, databaseId) : undefined
+    );
+
+    const [totalRows] = await db
+      .select({ count: count() })
+      .from(backupModel)
+      .where(where)
+      .limit(1);
+
     const backups = await db.query.backup.findMany({
-      where: (i) =>
-        and(
-          serverId ? eq(i.serverId, serverId) : undefined,
-          databaseId ? eq(i.databaseId, databaseId) : undefined
-        ),
+      where,
+      with: {
+        database: { columns: { name: true } },
+      },
       orderBy: desc(serverModel.createdAt),
       limit,
       offset: (page - 1) * limit,
     });
 
-    return backups;
+    return { count: totalRows.count, rows: backups };
   }
 
   async getOrFail(id: string) {
