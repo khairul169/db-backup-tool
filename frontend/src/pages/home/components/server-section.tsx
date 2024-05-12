@@ -3,10 +3,10 @@ import Button from "@/components/ui/button";
 import api, { parseJson } from "@/lib/api";
 import { useQuery } from "react-query";
 import ServerList from "../../servers/components/server-list";
-import AddServerDialog from "../../servers/components/add-server-dialog";
+import ServerFormDialog from "../../servers/components/server-form-dialog";
 import { initialServerData } from "@/pages/servers/schema";
 import PageTitle from "@/components/ui/page-title";
-import { addServerDlg } from "@/pages/servers/stores";
+import { serverFormDlg } from "@/pages/servers/stores";
 
 const ServerSection = () => {
   const { data, isLoading, error } = useQuery({
@@ -27,7 +27,7 @@ const ServerSection = () => {
           <p>No server added.</p>
           <Button
             className="mt-2"
-            onClick={() => addServerDlg.onOpen({ ...initialServerData })}
+            onClick={() => serverFormDlg.onOpen({ ...initialServerData })}
           >
             Add Server
           </Button>
@@ -36,7 +36,7 @@ const ServerSection = () => {
         <ServerList items={data} />
       )}
 
-      <AddServerDialog />
+      <ServerFormDialog />
     </section>
   );
 };

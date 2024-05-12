@@ -3,10 +3,17 @@ import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { FormControl } from "./form";
+import { FieldPath, FieldValues, UseFormReturn } from "react-hook-form";
+import { Label } from "./label";
+
+type CheckboxProps = React.ComponentPropsWithoutRef<
+  typeof CheckboxPrimitive.Root
+>;
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
+  CheckboxProps
 >(({ className, ...props }, ref) => (
   <CheckboxPrimitive.Root
     ref={ref}
@@ -24,5 +31,52 @@ const Checkbox = React.forwardRef<
   </CheckboxPrimitive.Root>
 ));
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
+
+type CheckboxFieldProps<TValues extends FieldValues> = Omit<
+  CheckboxProps,
+  "form"
+> & {
+  form: UseFormReturn<TValues>;
+  name: FieldPath<TValues>;
+  label?: string;
+  fieldClassName?: string;
+};
+
+const CheckboxField = <TValues extends FieldValues>({
+  form,
+  name,
+  label,
+  fieldClassName,
+  className,
+  ...props
+}: CheckboxFieldProps<TValues>) => {
+  return (
+    <FormControl
+      form={form}
+      name={name}
+      className={className}
+      render={({ field, id }) => (
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id={id}
+            className={fieldClassName}
+            {...field}
+            checked={field.value}
+            onCheckedChange={field.onChange}
+            {...props}
+          />
+
+          {label ? (
+            <Label htmlFor={id} className="cursor-pointer">
+              {label}
+            </Label>
+          ) : null}
+        </div>
+      )}
+    />
+  );
+};
+
+export default CheckboxField;
 
 export { Checkbox };

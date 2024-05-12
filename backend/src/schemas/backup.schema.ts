@@ -12,9 +12,14 @@ export const getAllBackupQuery = z
 
 export type GetAllBackupQuery = z.infer<typeof getAllBackupQuery>;
 
-export const createBackupSchema = z.object({
-  databaseId: z.string().nanoid(),
-});
+export const createBackupSchema = z
+  .object({
+    serverId: z.string().nanoid().optional(),
+    databaseId: z.string().nanoid().optional(),
+  })
+  .refine((i) => i.serverId || i.databaseId, {
+    message: "Either serverId or databaseId is required.",
+  });
 
 export type CreateBackupSchema = z.infer<typeof createBackupSchema>;
 

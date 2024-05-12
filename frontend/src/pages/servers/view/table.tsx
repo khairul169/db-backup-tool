@@ -1,8 +1,6 @@
 import { TableColumn } from "@/components/ui/data-table";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import BackupButton from "../components/backup-button";
-import { copyToClipboard, formatBytes } from "@/lib/utils";
+import { copyToClipboard, date, formatBytes } from "@/lib/utils";
 import BackupStatus from "../components/backup-status";
 import { queryClient } from "@/lib/queryClient";
 import Button from "@/components/ui/button";
@@ -16,8 +14,6 @@ import {
 import { confirmDlg } from "@/components/containers/confirm-dialog";
 import api, { parseJson } from "@/lib/api";
 import { toast } from "sonner";
-
-dayjs.extend(relativeTime);
 
 export type DatabaseType = {
   id: string;
@@ -36,8 +32,8 @@ export const databaseColumns: TableColumn<DatabaseType>[] = [
   {
     name: "Last Backup",
     selector: (i) =>
-      i.lastBackupAt ? dayjs(i.lastBackupAt).format("YYYY-MM-DD HH:mm") : "",
-    cell: (i) => (i.lastBackupAt ? dayjs(i.lastBackupAt).fromNow() : "never"),
+      i.lastBackupAt ? date(i.lastBackupAt).format("YYYY-MM-DD HH:mm") : "",
+    cell: (i) => (i.lastBackupAt ? date(i.lastBackupAt).fromNow() : "never"),
   },
   {
     selector: (i) => i.id,
@@ -136,12 +132,16 @@ export const backupsColumns: TableColumn<BackupType>[] = [
   },
   {
     name: "Timestamp",
-    selector: (i) => dayjs(i.createdAt).format("YYYY-MM-DD HH:mm"),
+    selector: (i) => date(i.createdAt).format("YYYY-MM-DD HH:mm"),
     cell: (i) => {
-      const diff = dayjs().diff(dayjs(i.createdAt), "days");
-      return diff < 3
-        ? dayjs(i.createdAt).fromNow()
-        : dayjs(i.createdAt).format("DD/MM/YY HH:mm");
+      const diff = date().diff(date(i.createdAt), "days");
+      return (
+        <p className="whitespace-nowrap truncate">
+          {diff < 3
+            ? date(i.createdAt).fromNow()
+            : date(i.createdAt).format("DD/MM/YY HH:mm")}
+        </p>
+      );
     },
   },
   {

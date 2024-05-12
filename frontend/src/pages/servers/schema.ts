@@ -1,5 +1,6 @@
 import { SelectOption } from "@/components/ui/select";
-import { CreateServerSchema } from "@backend/schemas/server.schema";
+import { createServerSchema } from "@backend/schemas/server.schema";
+import { z } from "zod";
 
 export const connectionTypes: SelectOption[] = [
   {
@@ -8,7 +9,15 @@ export const connectionTypes: SelectOption[] = [
   },
 ];
 
-export const initialServerData: CreateServerSchema = {
+export const serverFormSchema = createServerSchema.merge(
+  z.object({
+    id: z.string().nanoid().optional().nullable(),
+  })
+);
+
+export type ServerFormSchema = z.infer<typeof serverFormSchema>;
+
+export const initialServerData: ServerFormSchema = {
   name: "",
   connection: {
     type: "postgres",
@@ -18,4 +27,13 @@ export const initialServerData: CreateServerSchema = {
     pass: "",
   },
   databases: [],
+  backup: {
+    compress: true,
+    scheduled: false,
+    every: 1,
+    interval: "day",
+    time: "01:00",
+    day: 0,
+    month: 0,
+  },
 };

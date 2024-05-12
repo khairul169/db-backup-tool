@@ -1,4 +1,4 @@
-import { STORAGE_DIR } from "../consts";
+import { STORAGE_DIR } from "./src/consts";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({

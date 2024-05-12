@@ -1,6 +1,20 @@
 import { type ClassValue, clsx } from "clsx";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("Asia/Jakarta");
+export { dayjs };
+
+export const date = (date?: string | Date | null) => {
+  return dayjs.utc(date);
+};
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

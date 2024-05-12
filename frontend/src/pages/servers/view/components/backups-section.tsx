@@ -62,7 +62,7 @@ const BackupSection = ({ databases }: BackupSectionProps) => {
           onChange={(i) => setQuery({ databaseId: i })}
           value={query.databaseId}
           placeholder="Select Database"
-          className="min-w-[120px]"
+          className="min-w-[120px] w-auto"
         />
       </div>
       <Card className="mt-4 px-2 flex-1">

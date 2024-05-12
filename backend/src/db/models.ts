@@ -1,6 +1,12 @@
-import { relations, sql, type InferSelectModel } from "drizzle-orm";
+import {
+  relations,
+  sql,
+  type InferInsertModel,
+  type InferSelectModel,
+} from "drizzle-orm";
 import { blob, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
+import type { ServerBackupSchema } from "../schemas/server.schema";
 
 export const userModel = sqliteTable("users", {
   id: text("id")
@@ -27,6 +33,8 @@ export const serverModel = sqliteTable("servers", {
   createdAt: text("created_at")
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
+  backup: text("backup", { mode: "json" }).$type<ServerBackupSchema>(),
+  nextBackup: text("next_backup"),
 });
 export type ServerModel = InferSelectModel<typeof serverModel>;
 
@@ -95,6 +103,9 @@ export const backupModel = sqliteTable("backups", {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });
+
+export type BackupModel = InferSelectModel<typeof backupModel>;
+export type InsertBackupModel = InferInsertModel<typeof backupModel>;
 
 export const backupRelations = relations(backupModel, ({ one }) => ({
   server: one(serverModel, {

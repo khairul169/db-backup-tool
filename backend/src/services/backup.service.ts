@@ -1,5 +1,5 @@
 import db from "../db";
-import { backupModel, serverModel } from "../db/models";
+import { backupModel, databaseModel, serverModel } from "../db/models";
 import type {
   CreateBackupSchema,
   GetAllBackupQuery,
@@ -8,6 +8,7 @@ import type {
 import { and, count, desc, eq, inArray } from "drizzle-orm";
 import DatabaseService from "./database.service";
 import { HTTPException } from "hono/http-exception";
+import ServerService from "./server.service";
 
 export default class BackupService {
   private databaseService = new DatabaseService();
@@ -58,19 +59,48 @@ export default class BackupService {
    * Queue new backup
    */
   async create(data: CreateBackupSchema) {
-    const database = await this.databaseService.getOrFail(data.databaseId);
-    await this.checkPendingBackup(database.id);
+    if (data.databaseId) {
+      const database = await this.databaseService.getOrFail(data.databaseId);
+      await this.checkPendingBackup(database.id);
 
-    const [result] = await db
-      .insert(backupModel)
-      .values({
+      const [result] = await db
+        .insert(backupModel)
+        .values({
+          type: "backup",
+          serverId: database.serverId,
+          databaseId: database.id,
+        })
+        .returning();
+
+      return result;
+    } else if (data.serverId) {
+      const databases = await db.query.database.findMany({
+        where: and(
+          eq(databaseModel.serverId, data.serverId),
+          eq(databaseModel.isActive, true)
+        ),
+      });
+      if (!databases.length) {
+        throw new HTTPException(400, {
+          message: "No active databases found for this server.",
+        });
+      }
+
+      const values = databases.map((d) => ({
         type: "backup",
-        serverId: database.serverId,
-        databaseId: database.id,
-      })
-      .returning();
+        serverId: d.serverId,
+        databaseId: d.id,
+      }));
 
-    return result;
+      const result = await db
+        .insert(backupModel)
+        .values(values as never)
+        .returning();
+
+      return result;
+    }
+
+    return null;
   }
 
   async restore(data: RestoreBackupSchema) {

@@ -4,7 +4,7 @@ export type PostgresConfig = {
   type: "postgres";
   host: string;
   user: string;
-  pass: string;
+  pass?: string;
   port?: number;
 };
 

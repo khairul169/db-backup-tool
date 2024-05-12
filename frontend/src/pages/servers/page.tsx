@@ -3,8 +3,8 @@ import Button from "@/components/ui/button";
 import api, { parseJson } from "@/lib/api";
 import { useQuery } from "react-query";
 import ServerList from "./components/server-list";
-import AddServerDialog from "./components/add-server-dialog";
-import { addServerDlg } from "./stores";
+import ServerFormDialog from "./components/server-form-dialog";
+import { serverFormDlg } from "./stores";
 import { initialServerData } from "./schema";
 import PageTitle from "@/components/ui/page-title";
 
@@ -19,7 +19,7 @@ const ServerPage = () => {
       <div className="flex items-center gap-2 mt-2 md:mt-4">
         <PageTitle className="flex-1">Servers</PageTitle>
 
-        <Button onClick={() => addServerDlg.onOpen({ ...initialServerData })}>
+        <Button onClick={() => serverFormDlg.onOpen({ ...initialServerData })}>
           Add Server
         </Button>
       </div>
@@ -33,7 +33,7 @@ const ServerPage = () => {
           <p>No server added.</p>
           <Button
             className="mt-2"
-            onClick={() => addServerDlg.onOpen({ ...initialServerData })}
+            onClick={() => serverFormDlg.onOpen({ ...initialServerData })}
           >
             Add Server
           </Button>
@@ -42,7 +42,7 @@ const ServerPage = () => {
         <ServerList items={data} />
       )}
 
-      <AddServerDialog />
+      <ServerFormDialog />
     </main>
   );
 };

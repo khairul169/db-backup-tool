@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "96dd8a39-5c64-4bb1-86de-7a81b83ed1db",
+  "id": "242cd56d-c814-44c6-8a5b-4f0814248f31",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "backups": {
@@ -233,6 +233,20 @@
           "notNull": true,
           "autoincrement": false,
           "default": "CURRENT_TIMESTAMP"
+        },
+        "backup": {
+          "name": "backup",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "next_backup": {
+          "name": "next_backup",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},

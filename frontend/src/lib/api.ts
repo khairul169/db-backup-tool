@@ -1,5 +1,5 @@
 import { ClientResponse, hc } from "hono/client";
-import type { AppRouter } from "../../../backend/src/routers";
+import type { AppRouter } from "@backend/routers";
 
 const api = hc<AppRouter>("http://localhost:3000/");
 

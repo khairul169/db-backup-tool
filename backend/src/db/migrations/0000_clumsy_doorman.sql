@@ -30,7 +30,9 @@ CREATE TABLE `servers` (
 	`connection` text,
 	`ssh` text,
 	`is_active` integer DEFAULT true NOT NULL,
-	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL
+	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`backup` text,
+	`next_backup` text
 );
 --> statement-breakpoint
 CREATE TABLE `users` (
