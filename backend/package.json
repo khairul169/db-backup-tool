@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun --watch src/main.ts",
     "dev:compose": "cp ../bun.lockb . && docker compose -f docker-compose.dev.yml up --build",
-    "build": "bun build index.ts --outdir dist --target bun",
+    "build": "bun build src/main.ts --outdir dist --target bun",
     "start": "bun dist/main.js",
     "generate": "drizzle-kit generate",
     "migrate": "bun src/db/migrate.ts",

@@ -8,7 +8,6 @@ import type {
 import { and, count, desc, eq, inArray } from "drizzle-orm";
 import DatabaseService from "./database.service";
 import { HTTPException } from "hono/http-exception";
-import ServerService from "./server.service";
 
 export default class BackupService {
   private databaseService = new DatabaseService();

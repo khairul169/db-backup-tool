@@ -44,7 +44,7 @@ class PostgresDbms extends BaseDbms {
   }
 
   private get dbUrl() {
-    const { user, pass, host } = this.config;
+    const { user, pass = "", host } = this.config;
     const port = this.config.port || 5432;
     return `postgresql://${user}:${urlencode(pass)}@${host}:${port}`;
   }
