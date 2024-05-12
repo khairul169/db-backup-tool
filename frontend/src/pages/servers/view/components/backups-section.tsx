@@ -25,6 +25,7 @@ const BackupSection = ({ databases }: BackupSectionProps) => {
   const [query, setQuery] = useQueryParams<QueryParams>({
     page: 1,
     limit: 10,
+    databaseId: undefined,
   });
 
   const backups = useQuery({

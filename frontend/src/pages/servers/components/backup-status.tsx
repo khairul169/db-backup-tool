@@ -45,7 +45,7 @@ const BackupStatus = ({ status, output }: Props) => {
     <Popover>
       <PopoverTrigger
         disabled={!output}
-        title={output}
+        title={output?.substring(0, 120)}
         className={cn(
           "flex items-center gap-2 px-2 py-1 rounded-lg text-white shrink-0",
           colors[status]
@@ -57,8 +57,10 @@ const BackupStatus = ({ status, output }: Props) => {
         <p className="text-sm">{labels[status]}</p>
       </PopoverTrigger>
 
-      <PopoverContent className="max-w-lg w-screen">
-        <p className="font-mono text-sm">{output}</p>
+      <PopoverContent className="max-w-lg w-screen p-0">
+        <textarea className="font-mono text-sm w-full h-[200px] border-none outline-none p-4">
+          {output}
+        </textarea>
       </PopoverContent>
     </Popover>
   );

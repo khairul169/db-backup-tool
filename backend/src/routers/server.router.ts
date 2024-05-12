@@ -46,7 +46,7 @@ const router = new Hono()
       return c.json({ success: true, databases });
     } catch (err) {
       throw new HTTPException(400, {
-        message: "Cannot connect to the database.",
+        message: (err as any).message || "Cannot connect to the database.",
       });
     }
   })

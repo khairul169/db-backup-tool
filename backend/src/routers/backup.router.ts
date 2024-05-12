@@ -1,3 +1,4 @@
+import { processBackup } from "../schedulers/process-backup";
 import {
   createBackupSchema,
   getAllBackupQuery,
@@ -18,12 +19,22 @@ const router = new Hono()
 
   .post("/", zValidator("json", createBackupSchema), async (c) => {
     const body = c.req.valid("json");
-    return c.json(await backupService.create(body));
+    const result = await backupService.create(body);
+
+    // start backup scheduler
+    processBackup();
+
+    return c.json(result);
   })
 
   .post("/restore", zValidator("json", restoreBackupSchema), async (c) => {
     const body = c.req.valid("json");
-    return c.json(await backupService.restore(body));
+    const result = await backupService.restore(body);
+
+    // start restore scheduler
+    processBackup();
+
+    return c.json(result);
   });
 
 export default router;

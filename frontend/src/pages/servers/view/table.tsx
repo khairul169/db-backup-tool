@@ -158,6 +158,7 @@ export const backupsColumns: TableColumn<BackupType>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem
+              disabled={row.status !== "success"}
               onClick={() => {
                 confirmDlg.onOpen({
                   title: "Restore Backup",

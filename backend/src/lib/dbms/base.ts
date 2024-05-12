@@ -1,11 +1,15 @@
-import type { DatabaseListItem } from "../../types/database.types";
+import type { DatabaseListItem, DumpOptions } from "../../types/database.types";
 
 class BaseDbms {
   async getDatabases(): Promise<DatabaseListItem[]> {
     return [];
   }
 
-  async dump(_dbName: string, _path: string): Promise<string> {
+  async dump(
+    _dbName: string,
+    _path: string,
+    _options?: DumpOptions
+  ): Promise<string> {
     return "";
   }
 

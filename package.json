@@ -9,7 +9,10 @@
   "private": false,
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently \"cd backend && pnpm dev\" \"cd frontend && pnpm dev\""
+    "dev": "concurrently \"cd backend && npm run dev:compose\" \"cd frontend && npm run dev\"",
+    "build:frontend": "cd frontend && VITE_BACKEND_URL=/api npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build": "npm run build:frontend && npm run build:backend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

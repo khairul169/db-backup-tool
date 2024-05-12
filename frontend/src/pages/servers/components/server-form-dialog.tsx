@@ -18,9 +18,12 @@ import ConnectionTab from "./server-form-connection-tab";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BackupTab from "./server-form-backup-tab";
 import { ServerFormSchema, serverFormSchema } from "../schema";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const ServerFormDialog = () => {
   const { isOpen, data } = serverFormDlg.useState();
+  const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(serverFormSchema),
     defaultValues: data,
@@ -44,9 +47,13 @@ const ServerFormDialog = () => {
         return parseJson(res);
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       serverFormDlg.onClose();
       queryClient.invalidateQueries("servers");
+      navigate(`/servers/${data.id}`);
+    },
+    onError: (err) => {
+      toast.error((err as Error)?.message || "Failed to save server");
     },
   });
 
@@ -78,7 +85,7 @@ const ServerFormDialog = () => {
             </Button>
             <Button
               type="submit"
-              disabled={!databases.length}
+              disabled={!databases?.length}
               isLoading={saveServer.isLoading}
             >
               Submit

@@ -54,7 +54,11 @@ const BackupTab = () => {
 
   return (
     <TabsContent value="backup" className="mt-4">
-      <CheckboxField form={form} name="backup.compress" label="Compressed" />
+      <CheckboxField
+        form={form}
+        name="backup.compress"
+        label="Enable Compression"
+      />
 
       <CheckboxField
         className="mt-4"

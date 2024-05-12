@@ -12,3 +12,7 @@ export type DatabaseListItem = {
   name: string;
   size: string;
 };
+
+export type DumpOptions = Partial<{
+  compress: boolean;
+}>;

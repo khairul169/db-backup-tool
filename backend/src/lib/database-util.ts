@@ -1,6 +1,10 @@
 import BaseDbms from "./dbms/base";
 import PostgresDbms from "./dbms/postgres";
-import type { DatabaseConfig, DatabaseListItem } from "../types/database.types";
+import type {
+  DatabaseConfig,
+  DatabaseListItem,
+  DumpOptions,
+} from "../types/database.types";
 
 class DatabaseUtil {
   private db = new BaseDbms();
@@ -19,8 +23,12 @@ class DatabaseUtil {
     return this.db.getDatabases();
   }
 
-  async dump(dbName: string, path: string): Promise<string> {
-    return this.db.dump(dbName, path);
+  async dump(
+    dbName: string,
+    path: string,
+    options?: DumpOptions
+  ): Promise<string> {
+    return this.db.dump(dbName, path, options);
   }
 
   async restore(path: string): Promise<string> {

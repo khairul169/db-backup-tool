@@ -1,7 +1,8 @@
 import { ClientResponse, hc } from "hono/client";
 import type { AppRouter } from "@backend/routers";
 
-const api = hc<AppRouter>("http://localhost:3000/");
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const api = hc<AppRouter>(BACKEND_URL || "http://localhost:3000/");
 
 export const parseJson = async <T>(res: ClientResponse<T>) => {
   const json = await res.json();

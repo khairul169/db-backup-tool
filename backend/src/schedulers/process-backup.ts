@@ -25,11 +25,15 @@ const runBackup = async (task: PendingTasks[number]) => {
 
     if (task.type === "backup") {
       const key = path.join(server.connection.host, dbName, `${Date.now()}`);
-      const outFile = path.join(BACKUP_DIR, key);
+      let outFile = path.join(BACKUP_DIR, key);
       mkdir(path.dirname(outFile));
 
       // Run database dump command
-      const output = await dbUtil.dump(dbName, outFile);
+      const filename = await dbUtil.dump(dbName, outFile, {
+        compress: task.server.backup?.compress,
+      });
+      const ext = path.extname(filename);
+      outFile = outFile + ext;
 
       // Get file stats and file checksum
       const fileStats = fs.statSync(outFile);
@@ -40,8 +44,8 @@ const runBackup = async (task: PendingTasks[number]) => {
           .update(backupModel)
           .set({
             status: "success",
-            output,
-            key,
+            output: "",
+            key: key + ext,
             hash: sha256Hash,
             size: fileStats.size,
           })
@@ -90,7 +94,7 @@ const getPendingTasks = async () => {
     orderBy: (i) => asc(i.createdAt),
     with: {
       server: {
-        columns: { connection: true, ssh: true },
+        columns: { connection: true, ssh: true, backup: true },
       },
       database: {
         columns: { name: true },

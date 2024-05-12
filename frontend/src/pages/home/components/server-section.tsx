@@ -16,7 +16,13 @@ const ServerSection = () => {
 
   return (
     <section>
-      <PageTitle setTitle={false}>Servers</PageTitle>
+      <div className="flex items-center gap-2 mt-2 md:mt-4">
+        <PageTitle className="flex-1">Servers</PageTitle>
+
+        <Button onClick={() => serverFormDlg.onOpen({ ...initialServerData })}>
+          Add Server
+        </Button>
+      </div>
 
       {isLoading ? (
         <div>Loading...</div>

@@ -82,7 +82,12 @@ export default class ServerService {
         }))
       );
 
-      return data;
+      const server = this.parse(result);
+      if (server.connection?.pass) {
+        delete server.connection.pass;
+      }
+
+      return server;
     });
   }
 

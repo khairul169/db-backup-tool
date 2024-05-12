@@ -5,10 +5,10 @@ type ExecOptions = {
 };
 
 export const exec = async (
-  cmds: string[],
+  cmds: (string | null | undefined)[],
   options: Partial<ExecOptions> = {}
 ) => {
-  const proc = Bun.spawn(cmds, {
+  const proc = Bun.spawn(cmds.filter((i) => i != null) as string[], {
     env: options.env,
     stderr: "pipe",
   });

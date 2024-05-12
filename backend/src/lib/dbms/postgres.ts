@@ -1,7 +1,9 @@
 import type {
   DatabaseListItem,
+  DumpOptions,
   PostgresConfig,
 } from "../../types/database.types";
+import path from "path";
 import { exec } from "../../utility/process";
 import { urlencode } from "../../utility/utils";
 import BaseDbms from "./base";
@@ -18,21 +20,33 @@ class PostgresDbms extends BaseDbms {
     );
   }
 
-  async dump(dbName: string, path: string) {
-    return exec(["pg_dump", this.dbUrl + `/${dbName}`, "-Z9", "-f", path]);
+  async dump(dbName: string, path: string, options: DumpOptions = {}) {
+    const { compress } = options;
+    const ext = compress ? ".gz" : ".sql";
+    const filename = path + ext;
+
+    await exec([
+      "pg_dump",
+      this.dbUrl + `/${dbName}`,
+      "-Cc",
+      compress ? "-Z9" : null,
+      "-f",
+      filename,
+    ]);
+
+    return filename;
   }
 
-  async restore(path: string) {
-    return exec([
-      "pg_restore",
-      "-d",
-      this.dbUrl,
-      "-cC",
-      "--if-exists",
-      "--exit-on-error",
-      // "-Ftar",
-      path,
-    ]);
+  async restore(backupFile: string) {
+    const ext = path.extname(backupFile);
+    const isCompressed = ext === ".gz";
+    let cmd = `psql ${this.dbUrl} < ${backupFile}`;
+
+    if (isCompressed) {
+      cmd = `zcat ${backupFile} | psql ${this.dbUrl}`;
+    }
+
+    return exec(["sh", "-c", cmd]);
   }
 
   private async sql<T = any>(query: string) {

@@ -106,6 +106,12 @@ export default class BackupService {
     const backup = await this.getOrFail(data.backupId);
     await this.checkPendingBackup(backup.databaseId);
 
+    if (backup.status !== "success") {
+      throw new HTTPException(400, {
+        message: "Cannot restore backup that is not success.",
+      });
+    }
+
     if (!backup.key) {
       throw new HTTPException(400, {
         message: "Cannot restore backup without file key.",
